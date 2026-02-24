@@ -59,6 +59,9 @@ const stop = stopBySlug(slug);
 
 if (!stop) location.href = "map.html";
 
+// Mark as visited immediately so the next stop pulses on the map
+markDone(slug);
+
 // Page Transitions for Links
 document.querySelectorAll("a").forEach(link => {
   link.onclick = (e) => {
@@ -120,7 +123,6 @@ progressBar.onclick = (e) => {
 
 // Finalizing
 player.onended = () => {
-  markDone(slug);
   playBtn.innerText = "▶";
 };
 

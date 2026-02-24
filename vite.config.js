@@ -9,7 +9,8 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        main: 'map.html',
+        main: 'index.html',
+        map: 'map.html',
         stop: 'stop.html'
       }
     }

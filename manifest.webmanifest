@@ -1,0 +1,17 @@
+{
+  "name": "Flag Fen Audio Tour",
+  "short_name": "FlagFenTour",
+  "start_url": "./map.html",
+  "display": "standalone",
+  "background_color": "#050a09",
+  "theme_color": "#050a09",
+  "description": "An interactive audio-guided tour of the Flag Fen Archaeological Park.",
+  "icons": [
+    {
+      "src": "FF map no key or symbols high res with new roundhouse.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any"
+    }
+  ]
+}

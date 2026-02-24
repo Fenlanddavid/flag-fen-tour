@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="styles.css">
+<title>Flag Fen Audio Tour</title>
+</head>
+<body class="app">
+
+<header style="text-align: center; margin-bottom: 20px;">
+  <h1>Flag Fen Audio Tour</h1>
+  <p>Tap a location on the map to listen to the guide.</p>
+</header>
+
+<div class="map-container" id="map">
+  <img src="FF map no key or symbols high res with new roundhouse.jpg" class="map-image" id="map-img" alt="Flag Fen Site Map">
+  <!-- Pins will be injected here -->
+</div>
+
+<div class="card" style="margin-top: 24px; text-align: center;">
+  <h3>Tour Instructions</h3>
+  <p>Follow the numbered points on the map. You can listen to the stops in any order.</p>
+</div>
+
+<script type="module">
+import { STOPS } from "./data.js";
+import { getDone, haptic } from "./app.js";
+
+const mapDiv = document.getElementById("map");
+const doneSlugs = new Set(getDone());
+
+// Custom Guided Order Logic
+const orderedStops = [...STOPS].sort((a, b) => a.sequence - b.sequence);
+const nextStop = orderedStops.find(s => !doneSlugs.has(s.slug));
+
+STOPS.forEach((s, index) => {
+  const pin = document.createElement("a");
+  const isDone = doneSlugs.has(s.slug);
+  const isNext = nextStop && s.slug === nextStop.slug;
+  
+  pin.className = "pin";
+  if (isDone) pin.classList.add("done");
+  if (isNext) pin.classList.add("pulse");
+  
+  // The label on the pin remains the static ID (1-10)
+  pin.innerText = index + 1;
+  
+  // Set position from data.js
+  pin.style.left = s.x + "%";
+  pin.style.top = s.y + "%";
+  
+  pin.href = `stop.html?slug=${s.slug}`;
+  pin.onclick = (e) => {
+    e.preventDefault();
+    haptic(40);
+    document.body.classList.add("fade-out");
+    setTimeout(() => location.href = pin.href, 400);
+  };
+  
+  mapDiv.appendChild(pin);
+});
+</script>
+
+</body>
+</html>

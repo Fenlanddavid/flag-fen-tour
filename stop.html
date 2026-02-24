@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="styles.css">
+<title>Flag Fen Tour - Playing</title>
+</head>
+<body class="app">
+
+<nav style="margin-bottom: 10px;">
+  <a href="map.html" id="back-link" style="color: #7de0c6; text-decoration: none; font-weight: bold;">← Return to Map</a>
+</nav>
+
+<div class="card" style="text-align: center;">
+  <div style="font-size: 3rem; margin-bottom: 10px;">🎧</div>
+  <h2 id="title" style="margin-bottom: 20px;">Loading...</h2>
+  
+  <div class="player-container">
+    <audio id="player" style="display:none;"></audio>
+    
+    <div class="progress-bar" id="progress-bar">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+    
+    <div class="time-display">
+      <span id="current-time">0:00</span>
+      <span id="duration">0:00</span>
+    </div>
+
+    <div class="custom-controls">
+      <button class="player-btn" id="rewind-btn">↺ 15s</button>
+      <button class="player-btn play-btn-main" id="play-pause-btn">▶</button>
+      <button class="player-btn" id="fastforward-btn">15s ↻</button>
+    </div>
+
+    <div style="margin-top: 10px;">
+      <select id="speed-toggle" style="background:#132823; color:#7de0c6; border:1px solid #2c443e; padding:4px; border-radius:4px;">
+        <option value="0.75">0.75x</option>
+        <option value="1" selected>1.0x Speed</option>
+        <option value="1.25">1.25x</option>
+        <option value="1.5">1.5x</option>
+      </select>
+    </div>
+  </div>
+  
+  <div style="margin-top: 30px;">
+    <p style="opacity: 0.8;">Listening to the history of Flag Fen.</p>
+    <a href="map.html" id="next-link" class="btn">Next Location</a>
+  </div>
+</div>
+
+<script type="module">
+import { stopBySlug, markDone, haptic } from "./app.js";
+
+const params = new URLSearchParams(location.search);
+const slug = params.get("slug");
+const stop = stopBySlug(slug);
+
+if (!stop) location.href = "map.html";
+
+// Page Transitions for Links
+document.querySelectorAll("a").forEach(link => {
+  link.onclick = (e) => {
+    e.preventDefault();
+    document.body.classList.add("fade-out");
+    setTimeout(() => location.href = link.href, 400);
+  };
+});
+
+document.getElementById("title").innerText = stop.title;
+const player = document.getElementById("player");
+const playBtn = document.getElementById("play-pause-btn");
+const progressFill = document.getElementById("progress-fill");
+const progressBar = document.getElementById("progress-bar");
+const currentTimeEl = document.getElementById("current-time");
+const durationEl = document.getElementById("duration");
+
+player.src = stop.audio;
+
+// Formatting helper
+const formatTime = (s) => {
+  const mins = Math.floor(s / 60);
+  const secs = Math.floor(s % 60);
+  return `${mins}:${secs.toString().padStart(2, '0')}`;
+};
+
+// Controls
+playBtn.onclick = () => {
+  haptic(30);
+  if (player.paused) {
+    player.play();
+    playBtn.innerText = "⏸";
+  } else {
+    player.pause();
+    playBtn.innerText = "▶";
+  }
+};
+
+document.getElementById("rewind-btn").onclick = () => { haptic(20); player.currentTime -= 15; };
+document.getElementById("fastforward-btn").onclick = () => { haptic(20); player.currentTime += 15; };
+document.getElementById("speed-toggle").onchange = (e) => player.playbackRate = e.target.value;
+
+// Progress
+player.ontimeupdate = () => {
+  const pct = (player.currentTime / player.duration) * 100;
+  progressFill.style.width = pct + "%";
+  currentTimeEl.innerText = formatTime(player.currentTime);
+};
+
+player.onloadedmetadata = () => {
+  durationEl.innerText = formatTime(player.duration);
+};
+
+progressBar.onclick = (e) => {
+  const rect = progressBar.getBoundingClientRect();
+  const pct = (e.clientX - rect.left) / rect.width;
+  player.currentTime = pct * player.duration;
+};
+
+// Finalizing
+player.onended = () => {
+  markDone(slug);
+  playBtn.innerText = "▶";
+};
+
+player.play().catch(() => {});
+</script>
+
+</body>
+</html>

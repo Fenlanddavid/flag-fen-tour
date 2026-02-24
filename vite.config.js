@@ -10,9 +10,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: 'map.html',
-        stop: 'stop.html',
-        passport: 'passport.html',
-        ending: 'ending.html'
+        stop: 'stop.html'
       }
     }
   }

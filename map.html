@@ -23,9 +23,50 @@
   <p>Follow the numbered points on the map. You can listen to the stops in any order.</p>
 </div>
 
+<!-- Visitor Counter -->
+<div style="text-align: center; margin: 40px 0 20px 0; opacity: 0.6;">
+  <div style="display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; background: #0d1a17; border: 1px solid #1a3d35; border-radius: 50px; font-family: monospace;">
+    <span style="color: #ffd700; font-size: 8px; animation: pulse-dot 2s infinite;">●</span>
+    <span id="visitor-count" style="color: #7de0c6; font-weight: bold; font-size: 13px;">...</span>
+  </div>
+</div>
+
+<style>
+@keyframes pulse-dot {
+  0% { opacity: 1; }
+  50% { opacity: 0.3; }
+  100% { opacity: 1; }
+}
+</style>
+
 <script type="module">
 import { STOPS } from "./data.js";
 import { getDone, haptic } from "./app.js";
+
+// Visitor Counter Logic
+async function updateCounter() {
+  const counterId = "flagfen_visited";
+  const isNewSession = !sessionStorage.getItem(counterId);
+  
+  try {
+    // Correct URL for "up" increments, while the base URL just "gets" the total.
+    const url = isNewSession 
+      ? "https://api.counterapi.dev/v1/flagfen-tour/visits/up" 
+      : "https://api.counterapi.dev/v1/flagfen-tour/visits/";
+    
+    const res = await fetch(url);
+    const data = await res.json();
+    
+    document.getElementById("visitor-count").innerText = data.count.toLocaleString();
+    
+    if (isNewSession) {
+      sessionStorage.setItem(counterId, "true");
+    }
+  } catch (e) {
+    document.getElementById("visitor-count").innerText = "---";
+  }
+}
+updateCounter();
 
 const mapDiv = document.getElementById("map");
 const doneSlugs = new Set(getDone());

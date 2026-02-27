@@ -16,6 +16,10 @@ export function markDone(slug) {
   localStorage.setItem(KEY_DONE, JSON.stringify([...done]));
 }
 
+export function clearDone() {
+  localStorage.removeItem(KEY_DONE);
+}
+
 export function haptic(pattern = 25) {
   if (navigator.vibrate) {
     navigator.vibrate(pattern);

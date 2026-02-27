@@ -8,8 +8,9 @@
 </head>
 <body class="app">
 
-<nav style="margin-bottom: 10px;">
+<nav class="top-nav">
   <a href="map.html" id="back-link" style="color: #7de0c6; text-decoration: none; font-weight: bold;">← Return to Map</a>
+  <button class="reset-btn" id="reset-btn">↺ Reset</button>
 </nav>
 
 <div class="card" style="text-align: center;">
@@ -51,13 +52,22 @@
 </div>
 
 <script type="module">
-import { stopBySlug, markDone, haptic } from "./app.js";
+import { stopBySlug, markDone, haptic, clearDone } from "./app.js";
 
 const params = new URLSearchParams(location.search);
 const slug = params.get("slug");
 const stop = stopBySlug(slug);
 
 if (!stop) location.href = "map.html";
+
+// Reset Button Logic
+document.getElementById("reset-btn").onclick = () => {
+  if (confirm("Reset the tour? This will clear all completed locations.")) {
+    haptic(50);
+    clearDone();
+    location.href = "map.html";
+  }
+};
 
 // Mark as visited immediately so the next stop pulses on the map
 markDone(slug);

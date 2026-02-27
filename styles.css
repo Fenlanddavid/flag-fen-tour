@@ -188,3 +188,34 @@ h1, h2, h3 {
 }
 
 .hidden { display: none; }
+
+/* RESET BUTTON */
+.reset-btn {
+  background: #0d1a17;
+  color: #7de0c6;
+  border: 1px solid #1a3d35;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.reset-btn:hover {
+  background: #1a3d35;
+  border-color: #7de0c6;
+  color: #fff;
+}
+
+.top-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}

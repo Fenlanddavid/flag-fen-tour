@@ -8,6 +8,11 @@
 </head>
 <body class="app">
 
+<div class="top-nav">
+  <div style="width: 40px;"></div> <!-- Spacer -->
+  <button class="reset-btn" id="reset-btn">↺ Reset Tour</button>
+</div>
+
 <header style="text-align: center; margin-bottom: 20px;">
   <h1>Flag Fen Audio Tour</h1>
   <p>Tap a location on the map to listen to the guide.</p>
@@ -41,7 +46,16 @@
 
 <script type="module">
 import { STOPS } from "./data.js";
-import { getDone, haptic } from "./app.js";
+import { getDone, haptic, clearDone } from "./app.js";
+
+// Reset Button Logic
+document.getElementById("reset-btn").onclick = () => {
+  if (confirm("Reset the tour? This will clear all completed locations.")) {
+    haptic(50);
+    clearDone();
+    location.reload();
+  }
+};
 
 // Visitor Counter Logic
 async function updateCounter() {
